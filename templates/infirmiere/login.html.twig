@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login Infirmière{% endblock %}
+
+{% block body %}
+    <h1>Se connecter en tant qu'infirmière</h1>
+
+    <form action="{{ path('infirmiere_login') }}" method="post">
+        <div>
+            <label for="username">Nom d'utilisateur:</label>
+            <input type="text" id="username" name="_username" required autofocus />
+        </div>
+
+        <div>
+            <label for="password">Mot de passe:</label>
+            <input type="password" id="password" name="_password" required />
+        </div>
+
+        <div>
+            <button type="submit">Se connecter</button>
+        </div>
+    </form>
+{% endblock %}

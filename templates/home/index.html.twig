@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color:rgb(89, 76, 175);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-left: 20px;
+        }
+
+        nav {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            font-size: 18px;
+            color:rgb(76, 102, 175);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 2px solidrgb(76, 132, 175);
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color:rgb(76, 92, 175);
+            color: white;
+        }
+
+        /* Thông tin footer */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color:rgb(76, 99, 175);
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenue chez le système de gestion</h1>
+    <p>Total des patients: {{ total_patients }}</p>
+    <p>Total des infirmiers: {{ total_nurses }}</p>
+    <p>Total des visites: {{ total_visits }}</p>
+
+    <nav>
+        <ul>
+            <li><a href="{{ path('infirmiere_login') }}">L'équipe des infirmieres</a></li>
+            <li><a href="{{ path('app_patients') }}">Patient</a></li>
+            <li><a href="{{ path('app_visits') }}">Les visites</a></li>
+        </ul>
+    </nav>
+
+    <footer>
+        <p>&copy; 2025 Système de gestion des soins</p>
+    </footer>
+</body>
+</html>
