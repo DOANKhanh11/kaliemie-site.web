@@ -1,16 +1,168 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Système de gestion{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+        h1 {
+            background-color: rgb(89, 76, 175);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: rgb(89, 76, 175);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            color: rgb(89, 76, 175);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px; /* Space between buttons */
+            justify-content: center; /* Center buttons horizontally */
+            margin-top: 30px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            gap: 20px; /* Space between the buttons */
+        }
+
+        nav ul li {
+            display: inline-block;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            font-size: 18px;
+            color: rgb(76, 102, 175);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 2px solid rgb(76, 132, 175);
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgb(76, 92, 175);
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: rgb(89, 76, 175);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: rgb(76, 92, 175);
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .flash-message {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 20px; /* Optional: If you want to add space to the header */
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: rgb(89, 76, 175);
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .logo {
+            display: block;
+            margin: 0px auto 20px;
+            margin-top: 20px;
+            max-width: 150px; /* Adjust the logo size */
+        }
+    </style>
+</head>
+<body>
+    {% block header %}
+        <header>
+            <h1>Bienvenue chez le système de gestion</h1>
+        </header>
+    {% endblock %}
+
+    <!-- Add the Logo -->
+    <div class="logo-container">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo" />
+    </div>
+
+    {% block body %}
+        
+    {% endblock %}
+</body>
 </html>
