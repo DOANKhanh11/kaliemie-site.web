@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+<header>
+    <h1>
+        Bienvenue, Infirmière {{ app.user.userIdentifier }}
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+           class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+           Se déconnecter
+        </a>
+        <a href="{{ path('infirmiere_dashboard') }}" 
+            class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+            Retourner
+        </a>
+    </h1>
+
+    <form id="logout-form" action="{{ path('app_logout') }}" method="POST" style="display: none;">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+    </form>
+</header>
+{% endblock %}
+
+{% block title %}Visite Détailé{% endblock %}
+
+{% block body %}
+
+<h2 class="my-4 text-primary">Détail de la visite du {{ visite.datePrevue|date('d/m/Y H:i') }}</h2>
+
+<form method="post">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Soin</th>
+                    <th>Prévu</th>
+                    <th>Réalisé</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if visite is defined and visite.soinsVisites is defined and visite.soinsVisites|length > 0 %}
+                {% for sv in visite.soinsVisites %}
+                    <tr>
+                        <td>{{ sv.soins.libel }}</td>
+                        <td>
+                            <span class="badge {{ sv.prevu ? 'bg-success' : 'bg-secondary' }}">
+                                {{ sv.prevu ? 'Oui' : 'Non' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="form-check text-center">
+                                <input class="form-check-input" type="checkbox" name="realise_{{ sv.soins.id }}" {% if sv.realise %}checked{% endif %}>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted">Aucune visite planifiée.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">💾 Enregistrer</button>
+</form>
+{% endblock %}

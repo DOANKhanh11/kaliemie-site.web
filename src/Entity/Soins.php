@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -13,35 +14,33 @@ class Soins
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'integer', nullable: false)]
-    private int $idCategSoins;
+    private ?int $idCategSoins = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'integer', nullable: false)]
-    private int $idTypeSoins;
+    private ?int $idTypeSoins = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'integer', nullable: false)]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'text', length: 65535, nullable: false)]
-    private string $libel;
+    private ?string $libel = '';
 
     #[ORM\Column(type: 'text', length: 65535, nullable: true)]
-    private ?string $description;
+    private ?string $description = '';
 
     #[ORM\Column(type: 'float', precision: 10, scale: 0, nullable: false)]
-    private float $coefficient;
+    private ?float $coefficient = null;
 
-    // Sửa lại phần khai báo $date
     #[ORM\Column(type: 'datetime', nullable: false)]
-    private ?\DateTimeInterface $date = null;  // Không sử dụng chuỗi 'CURRENT_TIMESTAMP'
+    private ?\DateTimeInterface $date = null; 
 
     public function __construct()
     {
-        // Gán giá trị mặc định cho $date trong constructor
-        $this->date = new \DateTime();  // Gán ngày giờ hiện tại cho date
+        $this->date = new \DateTime(); 
     }
 
     public function getIdCategSoins(): ?int

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -15,7 +16,6 @@ class Indisponibilite
     #[ORM\GeneratedValue(strategy: 'NONE')]
     private int $infirmiere;
 
-    #[ORM\Id]
     #[ORM\Column(type: 'date')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     private \DateTimeInterface $dateDebut;
@@ -37,9 +37,22 @@ class Indisponibilite
         return $this->infirmiere;
     }
 
+    public function setInfirmiere(int $infirmiere): self
+    {
+        $this->infirmiere = $infirmiere;
+        return $this;
+    }
+
     public function getDateDebut(): \DateTimeInterface
     {
         return $this->dateDebut;
+    }
+
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    {
+        $this->dateDebut = $dateDebut;
+        
+        return $this;
     }
 
     public function getDateFin(): \DateTimeInterface

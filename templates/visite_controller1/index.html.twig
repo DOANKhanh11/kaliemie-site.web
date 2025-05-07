@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visite index{% endblock %}
+
+{% block body %}
+    <h1>Visite index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>DatePrevue</th>
+                <th>DateReelle</th>
+                <th>Duree</th>
+                <th>CompteRenduInfirmiere</th>
+                <th>CompteRenduPatient</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for visite in visites %}
+            <tr>
+                <td>{{ visite.id }}</td>
+                <td>{{ visite.datePrevue ? visite.datePrevue|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ visite.dateReelle ? visite.dateReelle|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ visite.duree }}</td>
+                <td>{{ visite.compteRenduInfirmiere }}</td>
+                <td>{{ visite.compteRenduPatient }}</td>
+                <td>
+                    <a href="{{ path('app_visite_controller1_show', {'id': visite.id}) }}">show</a>
+                    <a href="{{ path('app_visite_controller1_edit', {'id': visite.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_visite_controller1_new') }}">Create new</a>
+{% endblock %}

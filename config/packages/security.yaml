@@ -1,6 +1,8 @@
 security:
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\PersonneLogin:
+            algorithm: auto
+            migrate_from: [md5, sha256]
 
     providers:
         personne_login_provider:
@@ -8,54 +10,56 @@ security:
                 class: App\Entity\PersonneLogin
                 property: login
 
+
     firewalls:
         dev:
-            pattern: ^/infirmiere/login
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-        registration:
-            pattern: ^/infirmiere/register
-            security: false
-
-        login:
-            pattern: ^/infirmiere/login
-            stateless: false
-            provider: personne_login_provider
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true 
-                default_target_path: infirmiere_dashboard
-            custom_authenticator: App\Security\LoginAuthenticator
-            entry_point: form_login
-            logout:
-                path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
-                # where to redirect after logout
-                # target: app_any_route
-
-            remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800
-                path: /
-                # by default, the feature is enabled by checking a checkbox in the
-                # login form, uncomment the following line to always enable it.
-                #always_remember_me: true
 
         main:
             lazy: true
             provider: personne_login_provider
             custom_authenticator: App\Security\LoginAuthenticator
+            entry_point: App\Security\LoginAuthenticator
+            logout:
+                path: app_logout
+                target: /
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: infirmiere_dashboard 
-                enable_csrf: true
-            entry_point: form_login
+                default_target_path: redirect_after_login
 
     access_control:
-        - { path: ^/infirmiere/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/infirmiere/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/infirmiere/dashboard, roles: IS_AUTHENTICATED_FULLY }
+        # Public
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/infirmiere/login, roles: PUBLIC_ACCESS }
+        - { path: ^/patient/login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/change-password, roles: PUBLIC_ACCESS }
+
+        # Admin
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+        # Infirmiere
+        - { path: ^/infirmiere, roles: [ROLE_INFIRMIERE, ROLE_ADMIN] }
+
+        # Patient
+        - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_ADMIN] }
+
+        - { path: ^/patient/mon-compte, roles: ROLE_PATIENT }
+        - { path: ^/patient/\d+/index, roles: ROLE_ADMIN }
+        - { path: ^/patient/\d+/edit, roles: ROLE_ADMIN }
+        - { path: ^/patient/\d+/delete, roles: ROLE_ADMIN }
+
+        - { path: ^/infirmiere/admin/\d+/index, roles: ROLE_ADMIN }
+        - { path: ^/infirmiere/admin/\d+/edit, roles: ROLE_ADMIN }
+        - { path: ^/infirmiere/admin/\d+/delete, roles: ROLE_ADMIN }
+
+        - { path: ^/soins/admin/\d+/index, roles: ROLE_ADMIN }
+        - { path: ^/soins/admin/\d+/edit, roles: ROLE_ADMIN }
+        - { path: ^/soins/admin/\d+/delete, roles: ROLE_ADMIN }
 

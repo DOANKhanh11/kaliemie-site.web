@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Patient{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card shadow-sm border-0">
+         <div class="card-header" style="background-color: rgb(76, 92, 175); color: white;">
+            <h2 class="mb-0">Détails du Patient</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ patient.id}}</td>
+                    </tr>
+                    <tr>
+                        <th>Informations Médicales</th>
+                        <td>{{ patient.informationsMedicales }}</td>
+                    </tr>
+                    <tr>
+                        <th>Personne de Confiance</th>
+                        <td>{{ patient.personneDeConfiance ? patient.personneDeConfiance : 'Non renseigné' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('app_patient_index') }}" class="btn btn-secondary mb-2">Retourner à la liste</a>
+
+                {% if patient.idPersonne is not null %}
+                    <a href="{{ path('app_patient_edit', {'id': patient.idPersonne.id}) }}" class="btn btn-warning mb-2">Modifier</a>
+                {% else %}
+                    <p class="text-muted">Aucune information d'identité disponible.</p>
+                {% endif %}
+
+                {{ include('patient/_delete_form.html.twig') }}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

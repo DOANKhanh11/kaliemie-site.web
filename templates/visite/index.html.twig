@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes visites{% endblock %}
+
+{% block body %}
+    <h1>Mes visites</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Date prévue</th>
+                <th>Durée (min)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in visites %}
+            <tr>
+                <td>{{ v.patient }}</td>
+                <td>{{ v.datePrevue|date('d/m/Y H:i') }}</td>
+                <td>{{ v.duree }}</td>
+                <td>
+                    <a href="{{ path('visite_detail', {'id': v.id}) }}">Détail</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune visite.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

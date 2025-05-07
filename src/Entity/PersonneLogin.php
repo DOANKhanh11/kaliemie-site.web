@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\PersonneLoginRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: PersonneLoginRepository::class)]
 #[ORM\Table(name: 'personne_login')]
-class PersonneLogin implements UserInterface, PasswordAuthenticatedUserInterface
+class PersonneLogin implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,6 +25,15 @@ class PersonneLogin implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $derniereConnexion;
+
+    #[ORM\OneToOne(mappedBy: 'personneLogin', targetEntity: Infirmiere::class)]
+    private ?Infirmiere $infirmiere = null;
+
+    #[ORM\OneToOne(mappedBy: 'personneLogin', targetEntity: Administrateur::class)]
+    private ?Administrateur $administrateur = null;
+
+    #[ORM\OneToOne(mappedBy: 'personneLogin', targetEntity: Patient::class)]
+    private ?Patient $patient = null;
 
     public function getId(): ?int
     {
@@ -75,8 +86,19 @@ class PersonneLogin implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
-    }
+        $roles = [];
+    
+        if ($this->administrateur !== null) {
+            $roles[] = 'ROLE_ADMIN';
+        } elseif ($this->infirmiere !== null) {
+            $roles[] = 'ROLE_INFIRMIERE';
+        } elseif ($this->patient !== null){
+            $roles[] = 'ROLE_PATIENT';
+        }
+    
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
+    }    
 
     public function getSalt(): ?string
     {
@@ -86,5 +108,80 @@ class PersonneLogin implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         
+    }
+
+    public function getDerniereConnexion(): ?\DateTimeInterface
+    {
+        return $this->derniereConnexion;
+    }
+
+    public function setDerniereConnexion(?\DateTimeInterface $derniereConnexion): static
+    {
+        $this->derniereConnexion = $derniereConnexion;
+
+        return $this;
+    }
+
+    public function getInfirmiere(): ?Infirmiere
+    {
+        return $this->infirmiere;
+    }
+
+    public function setInfirmiere(?Infirmiere $infirmiere): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($infirmiere === null && $this->infirmiere !== null) {
+            $this->infirmiere->setPersonneLogin(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($infirmiere !== null && $infirmiere->getPersonneLogin() !== $this) {
+            $infirmiere->setPersonneLogin($this);
+        }
+
+        $this->infirmiere = $infirmiere;
+
+        return $this;
+    }
+
+    public function getAdministrateur(): ?Administrateur
+    {
+        return $this->administrateur;
+    }
+
+    public function setAdministrateur(?Administrateur $administrateur): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($administrateur === null && $this->administrateur !== null) {
+            $this->administrateur->setPersonneLogin(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($administrateur !== null && $administrateur->getPersonneLogin() !== $this) {
+            $administrateur->setPersonneLogin($this);
+        }
+
+        $this->administrateur = $administrateur;
+
+        return $this;
+    }
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): static
+    {
+        if ($patient === null && $this->patient !== null) {
+            $this->patient->setPersonneLogin(null);
+        }
+
+        if ($patient !== null && $patient->getPersonneLogin() !== $this) {
+            $patient->setPersonneLogin($this);
+        }
+
+        $this->patient = $patient;
+
+        return $this;
     }
 }

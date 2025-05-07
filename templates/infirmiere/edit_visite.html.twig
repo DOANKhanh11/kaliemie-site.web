@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Modifier Visite{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Modifier le Compte Rendu</h1>
+
+    <form method="post">
+        <div class="form-group">
+            <label for="compte_rendu">Compte Rendu Infirmière</label>
+            <textarea id="compte_rendu" name="compte_rendu" class="form-control" rows="6">{{ visite.compteRenduInfirmiere }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
+        <a href="{{ path('infirmiere_dashboard') }}" class="btn btn-secondary mt-3">Annuler</a>
+    </form>
+</div>
+{% endblock %}

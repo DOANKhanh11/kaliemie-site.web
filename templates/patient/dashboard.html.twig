@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+<h1>Bienvenue, Patient {{ patient.idPersonne.nom }}
+    <a href="{{ path('app_patient_mon_compte') }}" class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Modifier mes infos
+    </a>
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+       class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+           Se déconnecter
+    </a>
+</h1>
+<form id="logout-form" action="{{ path('app_logout') }}" method="POST" style="display: none;">
+   <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+</form>
+{% endblock %}
+{% block title %}Espace Patient{% endblock %}
+
+{% block body %}
+<div class="mt-4">
+    <h2 class="mb-3">Personne de confiance :</h2>
+    
+    {% if patient.personneDeConfiance is not null %}
+         <div>
+            <p style="text-align: left; margin-left: 1pcm; padding-left: 1cm;"><strong>Nom:</strong> {{ patient.personneDeConfiance.nom }}</p>
+            <p style="text-align: left; margin-left: 1pcm; padding-left: 1cm;"><strong>Prénom:</strong> {{ patient.personneDeConfiance.prenom }}</p>
+        </div>
+    {% else %}
+        <p style="text-align: left;">Aucune personne de confiance renseignée.</p>
+    {% endif %}
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+<h2>Mes visites à venir :</h2>
+</div>
+<ul>
+    {% for visite in visites %}
+        {%if not visite.estRealisee %}
+        <li>
+            Le {{ visite.datePrevue|date('d/m/Y H:i') }} avec {{ visite.infirmiere.idPersonne.nom ?? 'Infirmière inconnue' }}
+        </li>
+    {% else %}
+        <li>Aucune visite planifiée.</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+<h2>Toutes mes visites :</h2>
+<table class="table table-striped table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Date prévue</th>
+            <th>Infirmière</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for visite in visites %}
+            <tr>
+                <td>{{ visite.datePrevue|date('d/m/Y H:i') }}</td>
+                <td>{{ visite.infirmiere.idPersonne.nom ?? 'Infirmière inconnue' }}</td>
+                <td>
+                    {% if visite.estRealisee %}
+                        ✅ Réalisée
+                    {% else %}
+                        ❌ Non réalisée
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucune visite trouvée.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -45,4 +45,9 @@ class Badge
         $this->actif = $actif;
         return $this;
     }
+
+    public function isActif(): ?bool
+    {
+        return $this->actif;
+    }
 }

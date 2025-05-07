@@ -45,7 +45,6 @@ final class HomeController extends AbstractController
     #[Route('/patients', name: 'app_patients')]
     public function patients(): Response
     {
-        // Truy vấn tất cả các bệnh nhân
         $patients = $this->entityManager->getRepository(Patient::class)->findAll();
 
         return $this->render('home/patients.html.twig', [

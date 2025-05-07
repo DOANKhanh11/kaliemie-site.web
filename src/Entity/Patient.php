@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'patient')]
@@ -11,12 +14,17 @@ use Doctrine\ORM\Mapping as ORM;
 class Patient
 {
     #[ORM\Column(type: 'text', length: 65535, nullable: false)]
-    private string $informationsMedicales;
+    private string $informationsMedicales = '';
 
     #[ORM\Id]
+    #[ORM\OneToOne(inversedBy: 'patient', targetEntity: PersonneLogin::class)]
+    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', nullable: false)]
+    private ?PersonneLogin $personneLogin = null;
+
+    
     #[ORM\OneToOne(targetEntity: Personne::class)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id')]
-    private Personne $id;
+    private ?Personne $idPersonne = null;
 
     #[ORM\ManyToOne(targetEntity: Personne::class)]
     #[ORM\JoinColumn(name: 'personne_de_confiance', referencedColumnName: 'id')]
@@ -25,6 +33,25 @@ class Patient
     #[ORM\ManyToOne(targetEntity: Infirmiere::class)]
     #[ORM\JoinColumn(name: 'infirmiere_souhait', referencedColumnName: 'id')]
     private ?Infirmiere $infirmiereSouhait;
+
+    #[ORM\OneToMany(mappedBy: 'patient', targetEntity: Visite::class)]
+    private Collection $visites;
+
+    public function getId(): ?int
+    {
+        return $this->personneLogin?->getId();
+    }
+
+    public function getPersonneLogin(): ?PersonneLogin
+    {
+        return $this->personneLogin;
+    }
+
+    public function setPersonneLogin(?PersonneLogin $personneLogin): self
+    {
+        $this->personneLogin = $personneLogin;
+        return $this;
+    }
 
     public function getInformationsMedicales(): ?string
     {
@@ -38,14 +65,14 @@ class Patient
         return $this;
     }
 
-    public function getId(): ?Personne
+    public function getIdPersonne(): ?Personne
     {
-        return $this->id;
+        return $this->idPersonne;
     }
 
-    public function setId(?Personne $id): self
+    public function setIdPersonne(?Personne $id): self
     {
-        $this->id = $id;
+        $this->idPersonne = $id;
 
         return $this;
     }
@@ -72,5 +99,14 @@ class Patient
         $this->infirmiereSouhait = $infirmiereSouhait;
 
         return $this;
+    }
+    public function __construct()
+    {
+        $this->visites = new ArrayCollection();
+    }
+
+    public function getVisites(): Collection
+    {
+        return $this->visites;
     }
 }

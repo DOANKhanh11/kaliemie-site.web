@@ -47,7 +47,7 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre inscription a été réussie! Vous pouvez maintenant vous connecter.');
 
             // Redirect to the login page after successful registration
-            return $this->redirectToRoute('infirmiere_login');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/index.html.twig', [

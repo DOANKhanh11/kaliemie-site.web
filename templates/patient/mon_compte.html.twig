@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Compte{% endblock %}
+
+{% block header %}
+<h1>Mon Compte – {{ patient.idPersonne.nom }}
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+       class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Se déconnecter
+    </a>
+<form id="logout-form" action="{{ path('app_logout') }}" method="POST" style="display: none;">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+</form>
+    <a href="{{ path('patient_dashboard') }}" 
+        class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Retourner
+    </a>
+</h1>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    {% if is_granted('ROLE_PATIENT') %}
+        <div class="card shadow p-4">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+            <h2 class="mb-4">Modifier mes informations personnelles</h2>
+
+            {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.personneDeConfiance) }}
+                {{ form_widget(form.personneDeConfiance) }}
+                {{ form_errors(form.personneDeConfiance) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.informationsMedicales) }}
+                {{ form_widget(form.informationsMedicales) }}
+                {{ form_errors(form.informationsMedicales) }}
+            </div>
+
+            <div style="display: none;">
+                {{ form_widget(form.idPersonne) }}
+                {{ form_widget(form.personneLogin) }}
+                {{ form_widget(form.infirmiereSouhait) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            {{ form_end(form) }}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Vous devez être connecté pour voir cette page.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

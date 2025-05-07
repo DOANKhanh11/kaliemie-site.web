@@ -33,6 +33,14 @@ class SoinsVisite
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $idSoins;
 
+    #[ORM\ManyToOne(targetEntity: Visite::class, inversedBy: 'soinsVisite')]
+    #[ORM\JoinColumn(name: 'visite', referencedColumnName: 'id')]
+    private $visiteEntity;
+
+    #[ORM\ManyToOne(targetEntity: Soins::class)]
+    #[ORM\JoinColumn(name: 'id_soins', referencedColumnName: 'id')]
+    private $soins;
+
     #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $prevu;
 
@@ -42,6 +50,24 @@ class SoinsVisite
     public function getVisite(): ?int
     {
         return $this->visite;
+    }
+
+    public function setVisite(): self
+    {
+        $this->visite = $this->visiteEntity->getId();
+        return $this;
+    }
+
+    public function getVisiteEntity(): ?Visite
+    {
+        return $this->visiteEntity;
+    }
+
+    public function setVisiteEntity(?Visite $visiteEntity): self
+    {
+        $this->visiteEntity = $visiteEntity;
+
+        return $this;
     }
 
     public function getIdCategSoins(): ?int
@@ -57,6 +83,11 @@ class SoinsVisite
     public function getIdSoins(): ?int
     {
         return $this->idSoins;
+    }
+
+    public function getSoins(): ?Soins
+    {
+        return $this->soins;
     }
 
     public function getPrevu(): ?bool
@@ -79,6 +110,23 @@ class SoinsVisite
     public function setRealise(bool $realise): self
     {
         $this->realise = $realise;
+
+        return $this;
+    }
+
+    public function isPrevu(): ?bool
+    {
+        return $this->prevu;
+    }
+
+    public function isRealise(): ?bool
+    {
+        return $this->realise;
+    }
+
+    public function setSoins(?Soins $soins): static
+    {
+        $this->soins = $soins;
 
         return $this;
     }

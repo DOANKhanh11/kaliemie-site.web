@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+<header>
+    <h1>
+        Bienvenue, Infirmière {{ app.user.userIdentifier }}
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+           class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+           Se déconnecter
+        </a>
+        <a href="{{ path('infirmiere_dashboard') }}" 
+        class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Retourner
+        </a>
+    </h1>
+
+    <form id="logout-form" action="{{ path('app_logout') }}" method="POST" style="display: none;">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+    </form>
+</header>
+{% endblock %}
+
+{% block body %}
+<h2>Mes indisponibilités</h2>
+
+<a href="{{ path('indisponibilite_new') }}" class="btn btn-primary mb-3">➕ Ajouter</a>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Date début</th>
+            <th>Heure début</th>
+            <th>Date fin</th>
+            <th>Heure fin</th>
+            <th>Catégorie</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for indispo in indisponibilites %}
+            <tr>
+                <td>{{ indispo.dateDebut|date('d/m/Y') }}</td>
+                <td>{{ indispo.heureDeb ? indispo.heureDeb|date('H:i') : '-' }}</td>
+                <td>{{ indispo.dateFin|date('d/m/Y') }}</td>
+                <td>{{ indispo.heureFin ? indispo.heureFin|date('H:i') : '-' }}</td>
+                <td>
+                    {% set cats = {1: 'Vacances', 2: 'Maladie', 3: 'Formation', 4: 'Autre'} %}
+                    {{ cats[indispo.categorie] ?? 'Inconnu' }}
+                </td>
+                <td>
+                    <a href="{{ path('indisponibilite_delete', {
+                        'infirmiere': indispo.infirmiere,
+                        'dateDebut': indispo.dateDebut|date('Y-m-d')
+                    }) }}" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Supprimer cette indisponibilité ?');">Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center">Aucune indisponibilité trouvée.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -48,6 +49,11 @@ class Personne
 
     #[ORM\Column(type: 'string', length: 30, nullable: true)]
     private ?string $mail;
+
+    public function __toString(): string
+{
+    return $this->prenom . ' ' . $this->nom;
+}
 
     public function getId(): ?int
     {

@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block header %}
-
-{% endblock %} 
+{% block header %} {% endblock %} 
 
 {% block title %}Inscription Infirmière{% endblock %}
 
@@ -23,14 +21,14 @@
                 </div>
 
                 {# Flash Message for Success #}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
             
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-            {# Content of the page will be rendered here #}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+                {# Content of the page will be rendered here #}
 
                 <button type="submit" class="btn btn-primary">S'inscrire</button>
             {{ form_end(form) }}

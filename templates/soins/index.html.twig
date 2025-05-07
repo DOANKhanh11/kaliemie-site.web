@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Soins index{% endblock %}
+
+{% block body %}
+    <h1>Soins index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Libel</th>
+                <th>Description</th>
+                <th>Coefficient</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for soin in soins %}
+            <tr>
+                <td>{{ soin.id }}</td>
+                <td>{{ soin.libel }}</td>
+                <td>{{ soin.description }}</td>
+                <td>{{ soin.coefficient }}</td>
+                <td>{{ soin.date ? soin.date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_soins_new') }}">Create new</a>
+{% endblock %}

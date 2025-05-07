@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block header %}
+<header>
+    <h1>Patient Index
+    <a href="{{ path('admin_dashboard') }}" 
+        class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Retourner
+    </a>
+    </h1>
+</header>
+{% endblock %}
+
+{% block title %}Patient index{% endblock %}
+
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Informations Medicales</th>
+                <th>Personne De Confiance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for patient in patients %}
+            <tr>
+                <td>{{patient.id}}</td>
+                <td>{{ patient.informationsMedicales }}</td>
+                <td>{{ patient.personneDeConfiance }}</td>
+                <td>
+                    <a href="{{ path('app_patient_show', {'id': patient.id}) }}" class="btn btn-sm btn-primary mb-1">Afficher</a>
+                    <a href="{{ path('app_patient_edit', {'id': patient.id}) }}" class="btn btn-sm btn-primary mb-1">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_patient_new') }}">Créeer nouveau</a>
+{% endblock %}

@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'visite')]
-#[ORM\Index(name: 'patient', columns: ['patient'])]
-#[ORM\Index(name: 'infirmiere', columns: ['infirmiere'])]
 class Visite
 {
     #[ORM\Id]
@@ -15,11 +16,13 @@ class Visite
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $id;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private int $patient;
+    #[ORM\ManyToOne(targetEntity: Patient::class)]
+    #[ORM\JoinColumn(name: 'patient', referencedColumnName: 'id', nullable: false)]
+    private Patient $patient;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private int $infirmiere;
+    #[ORM\ManyToOne(targetEntity: Infirmiere::class)]
+    #[ORM\JoinColumn(name: 'infirmiere', referencedColumnName: 'id', nullable: false)]
+    private Infirmiere $infirmiere;
 
     #[ORM\Column(type: 'datetime', nullable: false)]
     private \DateTimeInterface $datePrevue;
@@ -36,28 +39,41 @@ class Visite
     #[ORM\Column(type: 'text', length: 65535, nullable: true)]
     private ?string $compteRenduPatient;
 
+    #[ORM\OneToMany(mappedBy: 'visite', targetEntity: SoinsVisite::class)]
+    private $soinsVisite;
+
+    public function __construct()
+    {
+        $this->soinsVisite = new ArrayCollection();
+    }
+
+    public function getSoinsVisite(): Collection
+    {
+        return $this->soinsVisite;
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPatient(): ?int
+    public function getPatient(): ?Patient
     {
         return $this->patient;
     }
 
-    public function setPatient(int $patient): self
+    public function setPatient(Patient $patient): self
     {
         $this->patient = $patient;
         return $this;
     }
 
-    public function getInfirmiere(): ?int
+    public function getInfirmiere(): ?Infirmiere
     {
         return $this->infirmiere;
     }
 
-    public function setInfirmiere(int $infirmiere): self
+    public function setInfirmiere(Infirmiere $infirmiere): self
     {
         $this->infirmiere = $infirmiere;
         return $this;
@@ -116,5 +132,31 @@ class Visite
     {
         $this->compteRenduPatient = $compteRenduPatient;
         return $this;
+    }
+
+    public function addSoinsVisite(SoinsVisite $soinsVisite): static
+    {
+        if (!$this->soinsVisite->contains($soinsVisite)) {
+            $this->soinsVisite->add($soinsVisite);
+            $soinsVisite->setVisite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSoinsVisite(SoinsVisite $soinsVisite): static
+    {
+        if ($this->soinsVisite->removeElement($soinsVisite)) {
+            // set the owning side to null (unless already changed)
+            if ($soinsVisite->getVisite() === $this) {
+                $soinsVisite->setVisite(null);
+            }
+        }
+
+        return $this;
+    }
+    public function estRealisee(): bool
+    {
+        return $this->dateReelle !== null || $this->datePrevue < new \DateTime();
     }
 }
