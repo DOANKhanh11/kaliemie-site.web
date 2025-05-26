@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Repository\PersonneLoginRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,13 +28,13 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
-    //public const LOGIN_ROUTE = 'infirmiere_login';
 
 
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private UserPasswordHasherInterface $passwordHasher,
-        private PersonneLoginRepository $personneLoginRepository // Inject repository
+        private PersonneLoginRepository $personneLoginRepository,
+        private EntityManagerInterface $entityManager
     ) {}
 
     public function authenticate(Request $request): Passport
@@ -48,24 +49,14 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     
         $user = $this->personneLoginRepository->findByLogin($login);
 
-        if (md5($password) !== $user->getMp()) {
-            throw new AuthenticationException('Mot de passe incorrect.');
-        }
-
         if (!$user) {
             throw new AuthenticationException('Utilisateur non trouvé.');
         }
 
-        /*return new Passport(
-            new UserBadge($login, function() use ($user){
-                return $user;
-            }),
-            new PasswordCredentials($password),
-            [
-                new CsrfTokenBadge('authenticate', $request->get('_csrf_token')),
-                new RememberMeBadge(),
-            ]
-        );*/
+        if (md5($password) !== $user->getMp()) {
+            throw new AuthenticationException('Mot de passe incorrect.');
+        }
+        
         return new Passport(
             new UserBadge($login, fn() => $user),
             new CustomCredentials(
@@ -85,7 +76,6 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     private function getUserByLogin(string $login): ?UserInterface
     {
-        // Tìm người dùng từ repository
         return $this->personneLoginRepository->findByLogin($login);
     }
 
@@ -96,6 +86,11 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         }*/
 
         $user = $token->getUser();
+
+         if ($user instanceof \App\Entity\PersonneLogin) {
+            $user->setDerniereConnexion(new \DateTime());
+            $this->entityManager->flush(); 
+        }
 
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));

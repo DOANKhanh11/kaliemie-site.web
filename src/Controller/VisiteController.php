@@ -11,10 +11,34 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VisiteController extends AbstractController
 {
+    #[Route('/api/visites', name: 'api_visites', methods: ['GET'])]
+    public function apiVisites(VisiteRepository $visiteRepository): JsonResponse
+    {
+        $visites = $visiteRepository->findAll();
+
+        $events = [];
+
+        foreach ($visites as $visite) {
+            $patient = $visite->getPatient()?->getIdPersonne();
+
+            $events[] = [
+                'id' => $visite->getId(),
+                'title' => $patient
+                    ? $patient->getNom() . ' ' . $patient->getPrenom()
+                    : 'Visite',
+                'start' => $visite->getDatePrevue()->format('Y-m-d\TH:i:s'),
+                'url' => $this->generateUrl('visite_detail', ['id' => $visite->getId()])
+            ];
+        }
+
+        return new JsonResponse($events);
+    }
+
     #[Route('/visite', name: 'app_visite')]
     public function index(VisiteRepository $visiteRepository): Response
     {

@@ -78,38 +78,37 @@ class SecurityController extends AbstractController
     return $this->redirectToRoute('app_login');
 }
 
-    #[Route('/change-password', name: 'app_change_password')]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+#[Route('/change-password', name: 'app_change_password')]
     public function changePassword(
         Request $request,
         EntityManagerInterface $em
-        ): Response {
+    ): Response {
+        $form = $this->createForm(ChangePasswordType::class);
+        $form->handleRequest($request);
 
-            $user = $this->getUser();
-            if (!$user instanceof \App\Entity\PersonneLogin) {
-                throw $this->createAccessDeniedException('Utilisateur invalide.');
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $login = $form->get('login')->getData();
+            $currentPassword = $form->get('currentPassword')->getData();
+            $newPassword = $form->get('newPassword')->getData();
 
-            $form = $this->createForm(ChangePasswordType::class);
-            $form->handleRequest($request);
+            // Tìm user theo login nhập trong form
+            $user = $this->personneLoginRepository->findOneBy(['login' => $login]);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $currentPassword = $form->get('currentPassword')->getData();
-                $newPassword = $form->get('newPassword')->getData();
-
-            if ($user->getMp() !== md5($currentPassword)) {
+            if (!$user) {
+                $this->addFlash('danger', 'Nom d\'utilisateur incorrect.');
+            } elseif ($user->getMp() !== md5($currentPassword)) {
                 $this->addFlash('danger', 'Mot de passe actuel incorrect.');
             } else {
-                $user->setMp(md5($newPassword)); // Hash bằng md5
+                $user->setMp(md5($newPassword));
                 $em->flush();
 
                 $this->addFlash('success', 'Mot de passe changé avec succès.');
-                return $this->redirectToRoute('app_login'); // Hoặc route chính
+                return $this->redirectToRoute('app_login');
             }
         }
 
-            return $this->render('security/change_password.html.twig', [
-                'form' => $form->createView(),
-            ]);
-        }
+        return $this->render('security/change_password.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
+}

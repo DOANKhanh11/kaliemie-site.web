@@ -19,23 +19,38 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+        <style>
+        #calendar {
+            min height: 600px;
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
 
-     <div class="d-flex justify-content-between align-items-center mt-4">
-        <h2>Planning des visites</h2>
-        <a href="{{ path('indisponibilite_index') }}" class="btn btn-outline-secondary">
-            📅 Mes indisponibilités
-        </a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <h2>Planning des visites</h2>
+    <a href="{{ path('indisponibilite_index') }}" class="btn btn-outline-secondary">
+        📅 Mes indisponibilités
+    </a>
+</div>
 
-    <div class="text-end mb-4">
-        <a href="{{ path('visite_add') }}" class="btn btn-primary">
-            ➕ Ajouter une visite
-        </a>
-    </div>
+<div class="text-end mb-4">
+    <a href="{{ path('visite_add') }}" class="btn btn-primary">
+        ➕ Ajouter une visite
+    </a>
+</div>
 
+<!-- ✅ FullCalendar ici -->
+<div id="calendar" class="mb-5"></div>
+
+<!-- ❗ Optionnel : Ancien tableau HTML ci-dessous (peut être masqué si non voulu) -->
+<div id="legacy-table" class="mt-5">
     <table class="table table-striped table-bordered table-hover align-middle">
         <thead class="table-dark">
             <tr>
@@ -50,18 +65,14 @@
         <tbody>
             {% for visite in visites %}
                 <tr>
-                    <td>{{visite.id}}</td>
+                    <td>{{ visite.id }}</td>
                     <td>{{ visite.patient.idPersonne.nom ?? 'Inconnu' }} {{ visite.patient.idPersonne.prenom ?? 'Inconnu' }}</td>
-                    <td>{{ visite.datePrevue|date('d-m-Y') }}</td>
+                    <td>{{ visite.datePrevue|date('d-m-Y H:i') }}</td>
                     <td>{{ visite.duree }} minutes</td>
                     <td>{{ visite.compteRenduInfirmiere ?: 'Aucun' }}</td>
                     <td class="text-center">
-                        <a href="{{ path('visite_detail', {'id': visite.id}) }}" class="btn btn-sm btn-primary mb-1">
-                            Consulter
-                        </a>
-                        <a href="{{ path('visite_edit', {'id': visite.id}) }}" class="btn btn-sm btn-primary mb-1">
-                            Modifier
-                        </a>
+                        <a href="{{ path('visite_detail', {'id': visite.id}) }}" class="btn btn-sm btn-primary mb-1">Consulter</a>
+                        <a href="{{ path('visite_edit', {'id': visite.id}) }}" class="btn btn-sm btn-primary mb-1">Modifier</a>
                         <a href="{{ path('visite_delete', {'id': visite.id}) }}" class="btn btn-sm btn-danger mb-1"
                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette visite ?');">
                             Supprimer
@@ -75,4 +86,57 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
+
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM chargé');
+
+            const calendarEl = document.getElementById('calendar');
+            if (!calendarEl) {
+                console.error('Div #calendar introuvable !');
+                return;
+            }
+
+            fetch('/api/visites')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur HTTP : ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(events => {
+                    console.log('Événements récupérés :', events);
+
+                    const calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        locale: 'fr',
+                        timeZone: 'local',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        events: events,
+                        eventClick: function(info) {
+                            info.jsEvent.preventDefault();
+                            if (info.event.url) {
+                                window.location.href = info.event.url;
+                            }
+                        }
+                    });
+
+                    calendar.render();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des événements :', error);
+                });
+        });
+    </script>
+{% endblock %}
+

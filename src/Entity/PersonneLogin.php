@@ -34,6 +34,7 @@ class PersonneLogin implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\OneToOne(mappedBy: 'personneLogin', targetEntity: Patient::class)]
     private ?Patient $patient = null;
+    
 
     public function getId(): ?int
     {

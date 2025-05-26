@@ -15,8 +15,12 @@ class Temoignage
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $id;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private int $personneLogin;
+    /*#[ORM\Column(type: 'integer', nullable: false)]
+    private int $personneLogin;*/
+
+    #[ORM\ManyToOne(targetEntity: PersonneLogin::class)]
+    #[ORM\JoinColumn(nullable:false)]
+    private PersonneLogin $personneLogin;
 
     #[ORM\Column(type: 'text', length: 16777215, nullable: false)]
     private string $contenu;
@@ -32,12 +36,12 @@ class Temoignage
         return $this->id;
     }
 
-    public function getPersonneLogin(): ?int
+    public function getPersonneLogin(): ?PersonneLogin
     {
         return $this->personneLogin;
     }
 
-    public function setPersonneLogin(int $personneLogin): self
+    public function setPersonneLogin(PersonneLogin $personneLogin): self
     {
         $this->personneLogin = $personneLogin;
 

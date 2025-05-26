@@ -13,10 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'id_type_soins', columns: ['id_type_soins'])]
 class SoinsVisite
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'NONE')]
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private int $visite;
+    //#[ORM\Id]
+    //#[ORM\GeneratedValue(strategy: 'NONE')]
+    //#[ORM\Column(type: 'integer', nullable: false)]
+    //private int $visite;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
@@ -47,16 +47,19 @@ class SoinsVisite
     #[ORM\Column(type: 'boolean', nullable: false)]
     private bool $realise;
 
-    public function getVisite(): ?int
+    
+
+    /*public function getVisite(): ?int
     {
         return $this->visite;
-    }
+    }*/
 
-    public function setVisite(): self
+    public function setVisite(Visite $visite): self
     {
-        $this->visite = $this->visiteEntity->getId();
+        $this->visiteEntity = $visite;
         return $this;
     }
+
 
     public function getVisiteEntity(): ?Visite
     {

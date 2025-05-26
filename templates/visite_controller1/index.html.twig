@@ -1,9 +1,17 @@
 {% extends 'base.html.twig' %}
-
+{% block header %}
+<header>
+    <h1>Visite Index
+    <a href="{{ path('admin_dashboard') }}" 
+        class="btn btn-outline-light btn-sm float-end me-4 mt-2">
+        Retourner
+    </a>
+    </h1>
+</header>
+{% endblock %}
 {% block title %}Visite index{% endblock %}
 
 {% block body %}
-    <h1>Visite index</h1>
 
     <table class="table">
         <thead>

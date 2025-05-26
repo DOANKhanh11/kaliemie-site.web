@@ -15,6 +15,4 @@ class IndisponibiliteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Indisponibilite::class);
     }
-
-    // Tuỳ ý bạn có thể thêm các query tuỳ chỉnh ở đây sau này
 }
